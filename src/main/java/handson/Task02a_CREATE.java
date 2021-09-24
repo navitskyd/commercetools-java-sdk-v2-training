@@ -1,23 +1,21 @@
 package handson;
 
+import static handson.impl.ClientService.createApiClient;
+import static handson.impl.ClientService.getProjectKey;
+
 import com.commercetools.api.client.ApiRoot;
 import handson.impl.ApiPrefixHelper;
 import handson.impl.ClientService;
 import handson.impl.CustomerService;
 import io.vrap.rmf.base.client.ApiHttpClient;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import static handson.impl.ClientService.createApiClient;
-import static handson.impl.ClientService.getProjectKey;
-
-
 /**
  * Configure sphere client and get project information.
- *
+ * <p>
  * See:
  *  TODO dev.properties
  *  TODO {@link ClientService#createApiClient(String prefix)}
@@ -40,22 +38,25 @@ public class Task02a_CREATE {
 
         try (ApiHttpClient apiHttpClient = ClientService.apiHttpClient) {
 
-            logger.info("Customer fetch: " +
-                    ""
-            );
+            logger.info("Customer fetch: " + "");
 
             // TODO:
             //  CREATE a customer
             //  CREATE a email verification token
             //  Verify customer
             //
-            logger.info("Customer created: " +
-                    ""
-            );
-        }
-        catch (Exception e) {
+            String customerPrettyString = customerService.createCustomer("dn-abc@mail.com", "pwd", "dn-customer-abc-mail-ru", "John", "Doe", "UK")
+                                                         .thenComposeAsync(
+                                                             customerSignInResultApiHttpResponse -> customerService.createEmailVerificationToken(
+                                                                 customerSignInResultApiHttpResponse, 5))
+                                                         .thenComposeAsync(customerService::verifyEmail)
+                                                         .toCompletableFuture()
+                                                         .get()
+                                                         .getBody()
+                                                         .toPrettyString();
+            logger.info("Customer created: " + customerPrettyString);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

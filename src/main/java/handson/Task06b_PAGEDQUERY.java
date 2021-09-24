@@ -46,8 +46,8 @@ public class Task06b_PAGEDQUERY {
             //  Give last id, start with slightly modified first id OR: do not use id when fetching first page
             //  Give product type id
 
-            String lastId = "60cf0a97-aa40-497e-91e4-394f456d6e70";
-            String productTypeId = "8ddaebf2-3fa4-4d9d-a9ec-45757dfdd02c";
+            String lastId = "91aa85c9-5ac1-40dc-b423-e57cd410258a";
+            String productTypeId = "e6acf882-033a-4af1-8e6d-dbce013ff621";
 
             //  link to give to our customers https://docs.commercetools.com/api/predicates/query
 

@@ -2,7 +2,13 @@ package handson;
 
 import com.commercetools.api.client.ApiRoot;
 import com.commercetools.api.models.common.LocalizedStringBuilder;
-import com.commercetools.api.models.type.*;
+import com.commercetools.api.models.type.CustomFieldBooleanType;
+import com.commercetools.api.models.type.CustomFieldStringType;
+import com.commercetools.api.models.type.FieldDefinition;
+import com.commercetools.api.models.type.FieldDefinitionBuilder;
+import com.commercetools.api.models.type.ResourceTypeId;
+import com.commercetools.api.models.type.TypeDraftBuilder;
+import com.commercetools.api.models.type.TypeTextInputHint;
 import handson.impl.ApiPrefixHelper;
 import handson.impl.ClientService;
 import io.vrap.rmf.base.client.ApiHttpClient;
@@ -72,8 +78,8 @@ public class Task07a_CUSTOMTYPES {
 
             Map<String, String> namesForType = new HashMap<String, String>() {
                 {
-                    put("DE", "mhCustomerPlantChecker");
-                    put("EN", "mhCustomerPlantChecker");
+                    put("UA", "dnCustomerPlantChecker");
+                    put("EN", "dnCustomerPlantChecker");
                 }
             };
 
@@ -81,8 +87,15 @@ public class Task07a_CUSTOMTYPES {
             //  Create custom type for Customer resource using the fields above
 
             logger.info("Custom Type created: " +
-                    ""
-            );
+                    client.withProjectKey(projectKey)
+                            .types().post(TypeDraftBuilder.of()
+                                    .key("dnCustomerPlantChecker")
+                                    .name(LocalizedStringBuilder.of()
+                                            .values(namesForType)
+                                            .build())
+                                    .resourceTypeIds(ResourceTypeId.CUSTOMER)
+                                    .fieldDefinitions(definitions)
+                                    .build()).execute().toCompletableFuture().get().getBody().getId());
         } catch (Exception e) {
             e.printStackTrace();
         }

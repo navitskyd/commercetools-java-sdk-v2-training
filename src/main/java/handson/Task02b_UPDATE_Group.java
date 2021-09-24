@@ -1,22 +1,22 @@
 package handson;
 
+import static handson.impl.ClientService.createApiClient;
+import static handson.impl.ClientService.getProjectKey;
+
 import com.commercetools.api.client.ApiRoot;
 import handson.impl.ApiPrefixHelper;
 import handson.impl.ClientService;
 import handson.impl.CustomerService;
 import io.vrap.rmf.base.client.ApiHttpClient;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import static handson.impl.ClientService.createApiClient;
-import static handson.impl.ClientService.getProjectKey;
-
 /**
  * Configure sphere client and get project information.
- *
+ * <p>
  * See:
  *  TODO dev.properties
  *  TODO {@link ClientService#createApiClient(String prefix)}
@@ -36,14 +36,21 @@ public class Task02b_UPDATE_Group {
             //  GET a customer group
             //  ASSIGN the customer to the customer group
             //
-            logger.info("Customer assigned to group: " +
-                    ""
-            );
-        }
-        catch (Exception e) {
+            logger.info("Customer assigned to group: " + customerService.getCustomerByKey("dn-customer-abc-mail-ru")
+                                                                        .thenCombineAsync(customerService.getCustomerGroupByKey("Indoor"),
+                                                                            customerService::assignCustomerToCustomerGroup)
+                                                                        .thenComposeAsync(CompletableFuture::toCompletableFuture)
+                                                                        .exceptionally(throwable -> {
+                                                                            logger.info(throwable.getLocalizedMessage());
+                                                                            return null;
+                                                                        })
+                                                                        .toCompletableFuture()
+                                                                        .get()
+                                                                        .getBody()
+                                                                        .getEmail());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }
 

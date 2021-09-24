@@ -37,8 +37,8 @@ public class Task07b_CUSTOMOBJECTS {
             // incompatibleSKUs: all the product variants above sku is incompatible with
 
             JsonObject tulipObject = Json.createObjectBuilder()
-                    .add("incompatibleSKUs", "BASILSEED01")
-                    .add("leafletID", "leaflet_1234")
+                    .add("incompatibleSKUs", "dn-BASILSEED01")
+                    .add("leafletID", "dn-leaflet_1234")
 
                     .add("instructions",
                             Json.createObjectBuilder()

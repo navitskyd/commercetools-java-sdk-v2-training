@@ -5,7 +5,15 @@ import com.commercetools.api.models.cart.Cart;
 import com.commercetools.api.models.cart.CartAddPaymentActionBuilder;
 import com.commercetools.api.models.cart.CartUpdateBuilder;
 import com.commercetools.api.models.common.MoneyBuilder;
-import com.commercetools.api.models.payment.*;
+import com.commercetools.api.models.payment.PaymentAddTransactionActionBuilder;
+import com.commercetools.api.models.payment.PaymentDraftBuilder;
+import com.commercetools.api.models.payment.PaymentMethodInfoBuilder;
+import com.commercetools.api.models.payment.PaymentResourceIdentifierBuilder;
+import com.commercetools.api.models.payment.PaymentSetStatusInterfaceCodeActionBuilder;
+import com.commercetools.api.models.payment.PaymentSetStatusInterfaceTextActionBuilder;
+import com.commercetools.api.models.payment.PaymentUpdateBuilder;
+import com.commercetools.api.models.payment.TransactionDraftBuilder;
+import com.commercetools.api.models.payment.TransactionType;
 import io.vrap.rmf.base.client.ApiHttpResponse;
 
 import java.time.ZonedDateTime;
@@ -50,9 +58,9 @@ public class PaymentService {
                                 PaymentDraftBuilder.of()
                                         .amountPlanned(
                                                 MoneyBuilder.of()
-                                                    .centAmount(cart.getTotalPrice().getCentAmount())
-                                                    .currencyCode(cart.getTotalPrice().getCurrencyCode())
-                                                    .build()
+                                                        .centAmount(cart.getTotalPrice().getCentAmount())
+                                                        .currencyCode(cart.getTotalPrice().getCurrencyCode())
+                                                        .build()
                                         )
                                         .paymentMethodInfo(
                                                 PaymentMethodInfoBuilder.of()
@@ -64,62 +72,62 @@ public class PaymentService {
                         )
                         .execute()
                         .thenComposeAsync(paymentApiHttpResponse ->
-                                    apiRoot
-                                            .withProjectKey(projectKey)
-                                            .payments()
-                                            .withId(paymentApiHttpResponse.getBody().getId())
-                                            .post(
-                                                    PaymentUpdateBuilder.of()
-                                                            .version(paymentApiHttpResponse.getBody().getVersion())
-                                                            .actions(
-                                                                    PaymentAddTransactionActionBuilder.of()
-                                                                            .transaction(
-                                                                                    TransactionDraftBuilder.of()
+                                apiRoot
+                                        .withProjectKey(projectKey)
+                                        .payments()
+                                        .withId(paymentApiHttpResponse.getBody().getId())
+                                        .post(
+                                                PaymentUpdateBuilder.of()
+                                                        .version(paymentApiHttpResponse.getBody().getVersion())
+                                                        .actions(
+                                                                PaymentAddTransactionActionBuilder.of()
+                                                                        .transaction(
+                                                                                TransactionDraftBuilder.of()
                                                                                         .amount(
-                                                                                            MoneyBuilder.of()
-                                                                                                .centAmount(cart.getTotalPrice().getCentAmount())
-                                                                                                .currencyCode(cart.getTotalPrice().getCurrencyCode())
-                                                                                                .build()
+                                                                                                MoneyBuilder.of()
+                                                                                                        .centAmount(cart.getTotalPrice().getCentAmount())
+                                                                                                        .currencyCode(cart.getTotalPrice().getCurrencyCode())
+                                                                                                        .build()
                                                                                         )
                                                                                         .timestamp(ZonedDateTime.now())
                                                                                         .type(TransactionType.CHARGE)
                                                                                         .interactionId(interactionId)
                                                                                         .build()
-                                                                            )
-                                                                            .build(),
-                                                                    // PaymentAddInterfaceInteractionActionBuilder.of()                 // Requires custom fields
-                                                                    PaymentSetStatusInterfaceCodeActionBuilder.of()
-                                                                            .interfaceCode("SUCCESS")
-                                                                            .build(),
-                                                                    PaymentSetStatusInterfaceTextActionBuilder.of()
-                                                                            .interfaceText("We got the money.")
-                                                                            .build()
-                                                            )
-                                                            .build()
-                                            )
-                                            .execute()
-                                            )
+                                                                        )
+                                                                        .build(),
+                                                                // PaymentAddInterfaceInteractionActionBuilder.of()                 // Requires custom fields
+                                                                PaymentSetStatusInterfaceCodeActionBuilder.of()
+                                                                        .interfaceCode("SUCCESS")
+                                                                        .build(),
+                                                                PaymentSetStatusInterfaceTextActionBuilder.of()
+                                                                        .interfaceText("We got the money.")
+                                                                        .build()
+                                                        )
+                                                        .build()
+                                        )
+                                        .execute()
+                        )
                         .thenComposeAsync(paymentApiHttpResponse ->
-                                    apiRoot
-                                            .withProjectKey(projectKey)
-                                            .carts()
-                                            .withId(cart.getId())
-                                            .post(
-                                                    CartUpdateBuilder.of()
-                                                            .version(cart.getVersion())
-                                                            .actions(
-                                                                    CartAddPaymentActionBuilder.of()
+                                apiRoot
+                                        .withProjectKey(projectKey)
+                                        .carts()
+                                        .withId(cart.getId())
+                                        .post(
+                                                CartUpdateBuilder.of()
+                                                        .version(cart.getVersion())
+                                                        .actions(
+                                                                CartAddPaymentActionBuilder.of()
                                                                         .payment(
                                                                                 PaymentResourceIdentifierBuilder.of()
-                                                                                    .id(paymentApiHttpResponse.getBody().getId())
-                                                                                    .build()
+                                                                                        .id(paymentApiHttpResponse.getBody().getId())
+                                                                                        .build()
                                                                         )
                                                                         .build()
-                                                            )
-                                                            .build()
-                                            )
-                                            .execute()
-                                );
+                                                        )
+                                                        .build()
+                                        )
+                                        .execute()
+                        );
     }
 
 }
